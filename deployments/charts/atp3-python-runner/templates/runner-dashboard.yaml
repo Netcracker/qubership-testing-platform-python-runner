@@ -1,0 +1,14 @@
+{{- if .Values.MONITORING_ENABLED }}
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDashboard
+metadata:
+  name: atp3-runner-dashboard
+  labels:
+    app: '{{ .Values.SERVICE_NAME }}'
+    name: '{{ .Values.SERVICE_NAME }}'
+    app.kubernetes.io/component: monitoring
+spec:
+  name: atp3_runner_dashboard.json
+  json: |+
+    {{ .Files.Get "dashboard/atp3_runner_dashboard.json" | nindent 4 }}
+{{- end }}
