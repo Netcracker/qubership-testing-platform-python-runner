@@ -79,14 +79,13 @@ flowchart TD
     p_cicd_pipeline --> p_argo_pipeline --> atp_Python_runner
 ```
 
-
 ### Deploy parameters
 
 | Parameter                    | Type    | Mandatory | Default value | Description                                                                                                                 |
 |------------------------------|---------|-----------|---------------|-----------------------------------------------------------------------------------------------------------------------------|
 | ENVIRONMENT_NAME             | string  | yes       | `"default"`   | Environment name (e.g., dev, test, prod).                                                                                   |
 | ATP_TESTS_GIT_REPO_URL       | string  | yes       | `""`          | Git repository URL for cloning test sources.                                                                                |
-| ATP_TESTS_GIT_REPO_BRANCH    | string  | no        | `main`      | Git branch to checkout.                                                                                                     |
+| ATP_TESTS_GIT_REPO_BRANCH    | string  | no        | `main`        | Git branch to checkout.                                                                                                     |
 | ATP_TESTS_GIT_TOKEN          | string  | yes       | `""`          | Access token for private Git repositories with tests.                                                                       |
 | TEST_PARAMS                  | json    | no        | `{}`          | Additional test parameters to pass to test runner.                                                                          |
 | ATP_ENVGENE_CONFIGURATION    | json    | no        | `{}`          | Additional test parameters to pass to test runner from EnvGene.                                                             |
@@ -101,8 +100,8 @@ flowchart TD
 | CURRENT_TIME                 | string  | no        | `""`          | Time to use in report naming (format: HH:MM:SS).                                                                            |
 | ATP_RUNNER_JOB_TTL           | integer | no        | `3600`        | Time-to-live for the test job in seconds.                                                                                   |
 | ATP_RUNNER_JOB_EXIT_STRATEGY | integer | no        | `0`           | Delay in seconds before job termination (for debugging).                                                                    |
-| ENABLE_JIRA_INTEGRATION      | boolean | no        | `false `      | Enable Jira integration for tests.                                                                                          |
-| MONITORING_ENABLED           | boolean | no        | `true `       | Enable creation monitoring objects for runners.                                                                             |
+| ENABLE_JIRA_INTEGRATION      | boolean | no        | `false`       | Enable Jira integration for tests.                                                                                          |
+| MONITORING_ENABLED           | boolean | no        | `true`        | Enable creation monitoring objects for runners.                                                                             |
 
 ### Quick Start
 
