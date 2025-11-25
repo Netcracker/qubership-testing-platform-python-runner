@@ -1,31 +1,33 @@
-name: Security Scan
+name: Security Scan Docker Packages
+run-name: >
+  Security Scan #${{ github.run_number }} for ${{ inputs.image != '' && inputs.image != null && inputs.image || 'all repository docker images' }}
 on:
   workflow_dispatch:
     inputs:
       target:
-        description: "Scan part"
-        required: true
-        default: "docker"
+        description: "Target type for the scan (docker, etc.)"
+        required: false
         type: choice
         options:
           - docker
           - source
       image:
-        description: "Docker image (for 'docker' target). By default ghcr.io/<owner>/<repo>:latest"
+        description: "Docker image (for docker). By default ghcr.io/<owner>/<repo>:latest"
         required: false
         default: ""
+        type: string
       only-high-critical:
-        description: "Scan only HIGH + CRITICAL"
+        description: "Scope only HIGH + CRITICAL"
         required: false
         default: true
         type: boolean
       trivy-scan:
-        description: "Run Trivy scan"
+        description: "Trivy scan"
         required: false
         default: true
         type: boolean
       grype-scan:
-        description: "Run Grype scan"
+        description: "Grype scan"
         required: false
         default: true
         type: boolean
@@ -35,29 +37,69 @@ on:
         default: true
         type: boolean
       only-fixed:
-        description: "Show only fixable vulnerabilities"
+        description: "Ignore unfixed vulnerabilities"
         required: false
         default: true
         type: boolean
-
   schedule:
     - cron: "0 3 * * 0" # every Sunday at 03:00 UTC
 
-permissions:
-  contents: read
-  security-events: write
-  actions: read
-  packages: read
-
 jobs:
-  security-scan:
-    name: "Run Security Scan"
+  debug-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    outputs:
+      ghcr-packages: ${{ steps.pkgs.outputs.ghcr-packages }}
+    steps:
+      - name: Show raw GHCR response
+        id: pkgs
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_PACKAGES }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          api_url="https://api.github.com/users/${OWNER}/packages?package_type=container"
+          echo "Request: $api_url"
+
+          response=$(curl -sS \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$api_url")
+
+          packages=$(echo "$response" | jq -c --arg owner "$OWNER" '
+            [.[]
+            | select(.repository.full_name == "nookyo/qubership-monitoring-operator")
+            | { name: .name, repository: .repository.name, full_name: .repository.full_name, path: "ghcr.io/\($owner)/\(.name)" }
+            ]
+          ')
+
+          echo "ghcr-packages=$packages" >> "$GITHUB_OUTPUT"
+          echo "Raw response:"
+          echo "$packages"
+
+  security-scan-matrix:
+    needs: debug-packages
+    if: ${{ inputs.image == '' || inputs.image == null }}
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.debug-packages.outputs.ghcr-packages) }}
+
+    name: "Run Security Scan (matrix)"
     uses: netcracker/qubership-workflow-hub/.github/workflows/re-security-scan.yml@main
     with:
-      target: ${{ github.event.inputs.target || 'docker' }}
-      image: ${{ github.event.inputs.image || format('ghcr.io/{0}:latest', github.repository) }}
-      only-high-critical: ${{ github.event.inputs.only-high-critical || true }}
-      trivy-scan: ${{ github.event.inputs.trivy-scan || true }}
-      grype-scan: ${{ github.event.inputs.grype-scan || true }}
-      only-fixed: ${{ github.event.inputs.only-fixed || true }}
-      continue-on-error: ${{ github.event.inputs.continue-on-error || true }}
+      target: ${{ inputs.target || 'docker' }}
+      image: ${{ format('{0}:main', matrix.package.path) }}
+
+  security-scan-single:
+    needs: debug-packages
+    if: ${{ inputs.image != '' && inputs.image != null }}
+    name: "Run Security Scan (single image)"
+    uses: netcracker/qubership-workflow-hub/.github/workflows/re-security-scan.yml@main
+    with:
+      target: ${{ inputs.target || 'docker' }}
+      image: ${{ inputs.image }}
+      only-high-critical: ${{ inputs.only-high-critical || true }}
+      trivy-scan: ${{ inputs.trivy-scan || true }}
+      grype-scan: ${{ inputs.grype-scan || true }}
+      only-fixed: ${{ inputs.only-fixed || true }}
+      continue-on-error: ${{ inputs.continue-on-error || true }}
