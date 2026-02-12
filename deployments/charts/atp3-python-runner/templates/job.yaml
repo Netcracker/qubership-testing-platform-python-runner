@@ -7,74 +7,90 @@ metadata:
     metrics-type: atp3-service
 spec:
   ttlSecondsAfterFinished: {{ .Values.ATP_RUNNER_JOB_TTL }}
+
   template:
     metadata:
       labels:
         metrics-type: atp3-service
     spec:
+      {{- if .Values.SECURITY_CONTEXT_ENABLED }}
+      securityContext:
+        {{- include "securityContext.pod" . | nindent 12 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity: {{- toYaml .Values.affinity | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.tolerations }}
+      tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
       containers:
-      - name: atp3-python-runner
-        image: '{{ .Values.DOCKER_TAG }}'
-        resources:
-          requests:
-            memory: '{{ .Values.MEMORY_REQUEST }}'
-            cpu: '{{ .Values.CPU_REQUEST }}'
-          limits:
-            memory: '{{ .Values.MEMORY_LIMIT }}'
-            cpu: '{{ .Values.CPU_LIMIT }}'
-        env:
-          - name: ATP_TESTS_GIT_REPO_URL
-            value: "{{ .Values.ATP_TESTS_GIT_REPO_URL }}"
-          - name: ATP_TESTS_GIT_REPO_BRANCH
-            value: "{{ .Values.ATP_TESTS_GIT_REPO_BRANCH }}"
-          - name: ENVIRONMENT_NAME
-            value: "{{ .Values.ENVIRONMENT_NAME }}"
-          - name: ATP_STORAGE_PROVIDER
-            value: "{{ .Values.ATP_STORAGE_PROVIDER }}"
-          - name: ATP_STORAGE_REGION
-            value: "{{ .Values.ATP_STORAGE_REGION }}"
-          - name: ATP_STORAGE_SERVER_URL
-            value: "{{ .Values.ATP_STORAGE_SERVER_URL }}"
-          - name: ATP_STORAGE_SERVER_UI_URL
-            value: "{{ .Values.ATP_STORAGE_SERVER_UI_URL }}"
-          - name: ATP_REPORT_VIEW_UI_URL
-            value: "{{ .Values.ATP_REPORT_VIEW_UI_URL }}"
-          - name: ATP_RUNNER_JOB_EXIT_STRATEGY
-            value: "{{ .Values.ATP_RUNNER_JOB_EXIT_STRATEGY }}"
-          - name: CURRENT_DATE
-            value: "{{ .Values.CURRENT_DATE }}"
-          - name: CURRENT_TIME
-            value: "{{ .Values.CURRENT_TIME }}"
-          - name: ATP_STORAGE_BUCKET
-            value: "{{ .Values.ATP_STORAGE_BUCKET }}"
-          - name: ENABLE_JIRA_INTEGRATION
-            value: "{{ .Values.ENABLE_JIRA_INTEGRATION }}"
-          - name: MONITORING_ENABLED
-            value: "{{ .Values.MONITORING_ENABLED }}"
-          - name: ATP_ENVGENE_CONFIGURATION
-            valueFrom:
-              configMapKeyRef:
-                name: {{ include "atp3-python-runner.fullname" . }}-cm
-                key: atpEnvgeneConfiguration
-          - name: TEST_PARAMS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ include "atp3-python-runner.fullname" . }}-cm
-                key: testParams
-          - name: ATP_TESTS_GIT_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "atp3-python-runner.fullname" . }}-secret
-                key: atpTestsGitToken
-          - name: ATP_STORAGE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "atp3-python-runner.fullname" . }}-secret
-                key: atpStorageUsername
-          - name: ATP_STORAGE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "atp3-python-runner.fullname" . }}-secret
-                key: atpStoragePassword
+        - name: atp3-python-runner
+          image: '{{ .Values.DOCKER_TAG }}'
+          {{- if .Values.SECURITY_CONTEXT_ENABLED }}
+          securityContext:
+            {{- include "securityContext.container" . | nindent 12 }}
+          {{- end }}
+          resources:
+            requests:
+              memory: '{{ .Values.MEMORY_REQUEST }}'
+              cpu: '{{ .Values.CPU_REQUEST }}'
+            limits:
+              memory: '{{ .Values.MEMORY_LIMIT }}'
+              cpu: '{{ .Values.CPU_LIMIT }}'
+          env:
+            - name: ATP_TESTS_GIT_REPO_URL
+              value: "{{ .Values.ATP_TESTS_GIT_REPO_URL }}"
+            - name: ATP_TESTS_GIT_REPO_BRANCH
+              value: "{{ .Values.ATP_TESTS_GIT_REPO_BRANCH }}"
+            - name: ENVIRONMENT_NAME
+              value: "{{ .Values.ENVIRONMENT_NAME }}"
+            - name: ATP_STORAGE_PROVIDER
+              value: "{{ .Values.ATP_STORAGE_PROVIDER }}"
+            - name: ATP_STORAGE_REGION
+              value: "{{ .Values.ATP_STORAGE_REGION }}"
+            - name: ATP_STORAGE_SERVER_URL
+              value: "{{ .Values.ATP_STORAGE_SERVER_URL }}"
+            - name: ATP_STORAGE_SERVER_UI_URL
+              value: "{{ .Values.ATP_STORAGE_SERVER_UI_URL }}"
+            - name: ATP_REPORT_VIEW_UI_URL
+              value: "{{ .Values.ATP_REPORT_VIEW_UI_URL }}"
+            - name: ATP_RUNNER_JOB_EXIT_STRATEGY
+              value: "{{ .Values.ATP_RUNNER_JOB_EXIT_STRATEGY }}"
+            - name: CURRENT_DATE
+              value: "{{ .Values.CURRENT_DATE }}"
+            - name: CURRENT_TIME
+              value: "{{ .Values.CURRENT_TIME }}"
+            - name: ATP_STORAGE_BUCKET
+              value: "{{ .Values.ATP_STORAGE_BUCKET }}"
+            - name: ENABLE_JIRA_INTEGRATION
+              value: "{{ .Values.ENABLE_JIRA_INTEGRATION }}"
+            - name: MONITORING_ENABLED
+              value: "{{ .Values.MONITORING_ENABLED }}"
+            - name: ATP_ENVGENE_CONFIGURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-cm
+                  key: atpEnvgeneConfiguration
+            - name: TEST_PARAMS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-cm
+                  key: testParams
+            - name: ATP_TESTS_GIT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
+                  key: atpTestsGitToken
+            - name: ATP_STORAGE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
+                  key: atpStorageUsername
+            - name: ATP_STORAGE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
+                  key: atpStoragePassword
       restartPolicy: Never
   backoffLimit: 0

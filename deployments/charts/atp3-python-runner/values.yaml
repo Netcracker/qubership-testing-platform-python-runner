@@ -18,4 +18,14 @@ ATP_RUNNER_JOB_EXIT_STRATEGY: "EXIT_ALWAYS"
 TEST_PARAMS: {}
 ATP_ENVGENE_CONFIGURATION: {}
 ENABLE_JIRA_INTEGRATION: false
+# Security Context properties
+# enabled is a flag to enable Security Context
+SECURITY_CONTEXT_ENABLED: false
+# runAsUser is the user ID used to run the container
+podSecurityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+containerSecurityContext: {}
+affinity: {}
+tolerations: []
 MONITORING_ENABLED: true
