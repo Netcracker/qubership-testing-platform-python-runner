@@ -35,10 +35,10 @@ RUN addgroup -g 1007 runner && \
 
 WORKDIR $HOME_EX
 
+COPY requirements.txt $HOME_EX/requirements.txt
+
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
         --timeout=120
-
-COPY requirements.txt $HOME_EX/requirements.txt
 
 COPY scripts/ $HOME_EX/scripts/
 COPY scripts/runtimes/python-setup.sh $HOME_EX/scripts/runtime-setup.sh
