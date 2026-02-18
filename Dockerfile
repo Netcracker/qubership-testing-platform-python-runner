@@ -46,3 +46,4 @@ COPY --chown=runner:runner --chmod=755 entrypoint.sh $HOME_EX/entrypoint.sh
 USER 1007
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+
