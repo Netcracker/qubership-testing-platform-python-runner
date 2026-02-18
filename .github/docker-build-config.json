@@ -1,0 +1,15 @@
+{
+  "components": [
+    {
+      "name": "qubership-testing-platform-python-runner",
+      "file": "./Dockerfile",
+      "context": "."
+    },
+    {
+      "name": "qubership-testing-platform-python-runner-transfer",
+      "file": "docker-transfer/Dockerfile",
+      "context": "."
+    }
+  ],
+  "platforms": "linux/amd64"
+}
