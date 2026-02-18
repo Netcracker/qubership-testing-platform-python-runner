@@ -20,7 +20,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
         libffi-dev=3.4.8-r0 \
         py3-requests=2.32.5-r0 \
         py3-urllib3=1.26.20-r1 \
-        python3-certifi=2025.4.26-r0 && \
+        py3-certifi=2025.4.26-r0 && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget -q -O /tmp/s5cmd.tar.gz \
