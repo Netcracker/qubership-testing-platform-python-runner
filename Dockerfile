@@ -2,13 +2,6 @@ FROM python:3.14-alpine3.22
 
 ENV HOME_EX=/app
 
-RUN groupadd -g 1007 runner && \
-    useradd -u 1007 -g runner -d "$HOME_EX" -s /bin/bash runner && \
-    mkdir -p "$HOME_EX" && \
-    chown -R runner:runner "$HOME_EX"
-
-WORKDIR $HOME_EX
-
 COPY requirements.txt $HOME_EX/requirements.txt
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
@@ -36,6 +29,13 @@ RUN wget -q -O /tmp/s5cmd.tar.gz \
     mv /tmp/s5cmd /usr/local/bin/ && \
     chmod +x /usr/local/bin/s5cmd && \
     rm -rf /tmp/s5cmd*
+
+RUN groupadd -g 1007 runner && \
+    useradd -u 1007 -g runner -m -d "$HOME_EX" runner && \
+    mkdir -p "$HOME_EX" && \
+    chown -R runner:runner "$HOME_EX"
+
+WORKDIR $HOME_EX
 
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
         --timeout=120
