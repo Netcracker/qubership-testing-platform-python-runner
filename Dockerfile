@@ -2,8 +2,6 @@ FROM python:3.14-alpine3.22
 
 ENV HOME_EX=/app
 
-COPY requirements.txt $HOME_EX/requirements.txt
-
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
@@ -39,6 +37,8 @@ WORKDIR $HOME_EX
 
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
         --timeout=120
+
+COPY requirements.txt $HOME_EX/requirements.txt
 
 COPY scripts/ $HOME_EX/scripts/
 COPY scripts/runtimes/python-setup.sh $HOME_EX/scripts/runtime-setup.sh
