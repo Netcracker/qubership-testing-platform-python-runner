@@ -28,8 +28,8 @@ RUN wget -q -O /tmp/s5cmd.tar.gz \
     chmod +x /usr/local/bin/s5cmd && \
     rm -rf /tmp/s5cmd*
 
-RUN groupadd -g 1007 runner && \
-    useradd -u 1007 -g runner -m -d "$HOME_EX" runner && \
+RUN addgroup -g 1007 runner && \
+    adduser -u 1007 -G runner -D -h "$HOME_EX" runner && \
     mkdir -p "$HOME_EX" && \
     chown -R runner:runner "$HOME_EX"
 
