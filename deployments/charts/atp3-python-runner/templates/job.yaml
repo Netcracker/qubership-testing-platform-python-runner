@@ -69,8 +69,8 @@ spec:
               value: "{{ .Values.MONITORING_ENABLED }}"
             - name: ATP_ENVGENE_CONFIGURATION
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "atp3-python-runner.fullname" . }}-cm
+                secretKeyRef:
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: atpEnvgeneConfiguration
             - name: TEST_PARAMS
               valueFrom:
