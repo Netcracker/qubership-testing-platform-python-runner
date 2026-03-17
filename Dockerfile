@@ -1,6 +1,8 @@
 FROM python:3.14-alpine3.22
 
 ENV HOME_EX=/app
+ENV PYTHONPATH=/app
+ENV PYTEST_ADDOPTS="-p tracing"
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
@@ -42,6 +44,7 @@ RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
 
 COPY scripts/ $HOME_EX/scripts/
 COPY scripts/runtimes/python-setup.sh $HOME_EX/scripts/runtime-setup.sh
+COPY tracing.py $HOME_EX/tracing.py
 
 COPY --chown=runner:runner --chmod=755 entrypoint.sh $HOME_EX/entrypoint.sh
 
