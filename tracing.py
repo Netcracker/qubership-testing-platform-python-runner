@@ -87,7 +87,6 @@ class _TraceIdSpanIdPropagator:
         from opentelemetry import trace as otel_trace
         from opentelemetry.propagators.textmap import default_setter
 
-        print("TraceIdSpanIdPropagator inject")
         if setter is None:
             setter = default_setter
 
@@ -97,10 +96,8 @@ class _TraceIdSpanIdPropagator:
 
         setter.set(carrier, "trace-id", format(span_ctx.trace_id, "032x"))
         setter.set(carrier, "span-id", format(span_ctx.span_id, "016x"))
-        print("TraceIdSpanIdPropagator inject - done with span_ctx", span_ctx.trace_id, span_ctx.span_id, format(span_ctx.trace_id, "032x"), format(span_ctx.span_id, "016x"))
 
     def extract(self, carrier, context=None, getter=None):
-        print("TraceIdSpanIdPropagator extract - skipping")
         return context
 
     @property
@@ -122,7 +119,6 @@ def _attach_root_context() -> None:
     from opentelemetry.trace import NonRecordingSpan, SpanContext, TraceFlags
 
     parts = _TRACEPARENT.split("-")
-    print("parts", parts)
     if len(parts) != 4:
         return
     try:
@@ -132,13 +128,9 @@ def _attach_root_context() -> None:
             is_remote=True,
             trace_flags=TraceFlags(int(parts[3], 16)),
         )
-        print("span_ctx", span_ctx)
         root_ctx = otel_trace.set_span_in_context(NonRecordingSpan(span_ctx))
         otel_context.attach(root_ctx)
-        print("root_ctx", root_ctx)
     except (ValueError, IndexError):
-        print("Attach root context failed")
-        print("ValueError, IndexError", ValueError, IndexError)
         pass
 
 
@@ -151,21 +143,16 @@ def _bootstrap_otel() -> None:
     from opentelemetry.propagators.b3 import B3MultiFormat
     from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-    print("bootstrap_otel")
     service_name = os.environ.get("OTEL_SERVICE_NAME", "atp3-python-runner")
-    print("service_name", service_name)
     resource = Resource({SERVICE_NAME: service_name})
     provider = TracerProvider(resource=resource)
     _provider = provider
-    print("provider", provider)
 
     otlp_endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT")
     if otlp_endpoint:
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
-        print("otlp_endpoint", otlp_endpoint)
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-        print("span_processor added")
 
     otel_trace.set_tracer_provider(provider)
 
@@ -181,21 +168,15 @@ def _bootstrap_otel() -> None:
     try:
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
         RequestsInstrumentor().instrument()
-        print("RequestsInstrumentation instrumented")
     except ImportError as e:
-        print("RequestsInstrumentation import error", e)
-        print("RequestsInstrumentation import error", e.name)
-        print("RequestsInstrumentation import error", e.path)
+        print("RequestsInstrumentation import error, skipping tracing.", e.name, e.path)
         pass
 
     try:
         from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
         URLLib3Instrumentor().instrument()
-        print("URLLib3Instrumentation instrumented")
     except ImportError as e:
-        print("URLLib3Instrumentation import error", e)
-        print("URLLib3Instrumentation import error", e.name)
-        print("URLLib3Instrumentation import error", e.path)
+        print("URLLib3Instrumentation import error, skipping tracing.", e.name, e.path)
         pass
 
     _patch_print()
