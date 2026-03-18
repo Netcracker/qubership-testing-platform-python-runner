@@ -34,15 +34,18 @@ If TRACEPARENT is absent (e.g. local dev run), setup is skipped entirely.
 """
 from __future__ import annotations
 
-# opentelemetry packages are available at runtime but not in the linter env
-# pylint: disable=import-error
-
 import builtins
 import os
 from typing import Optional, Set
 
+from opentelemetry.sdk.trace import TracerProvider
+
+# opentelemetry packages are available at runtime but not in the linter env
+# pylint: disable=import-error
+
+
 _TRACEPARENT: str = os.environ.get("TRACEPARENT", "")
-_provider: Optional[object] = None
+_provider: Optional["TracerProvider"] = None
 
 
 # ---------------------------------------------------------------------------
@@ -66,7 +69,7 @@ def force_flush(timeout_millis: int = 5000) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def pytest_configure(config) -> None: # pylint: disable=unused-argument
+def pytest_configure(config) -> None:  # pylint: disable=unused-argument
     """Called once per worker process before test collection starts."""
     if not _TRACEPARENT:
         return
@@ -162,8 +165,8 @@ def _attach_root_context() -> None:
     test session inherits the same trace ID.
     """
     # pylint: disable=import-outside-toplevel
-    from opentelemetry import trace as otel_trace
     from opentelemetry import context as otel_context
+    from opentelemetry import trace as otel_trace
     from opentelemetry.trace import NonRecordingSpan, SpanContext, TraceFlags
 
     # pylint: enable=import-outside-toplevel
@@ -188,7 +191,6 @@ def _create_provider():
     """Build a TracerProvider with a service-name resource and return it."""
     # pylint: disable=import-outside-toplevel
     from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-    from opentelemetry.sdk.trace import TracerProvider
 
     # pylint: enable=import-outside-toplevel
 
@@ -203,7 +205,8 @@ def _add_otlp_exporter(provider) -> None:
     if not otlp_endpoint:
         return
     # pylint: disable=import-outside-toplevel
-    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import \
+        OTLPSpanExporter
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
     # pylint: enable=import-outside-toplevel
@@ -218,9 +221,8 @@ def _setup_propagators(provider) -> None:
     from opentelemetry import trace as otel_trace
     from opentelemetry.propagators.b3 import B3MultiFormat
     from opentelemetry.propagators.composite import CompositePropagator
-    from opentelemetry.trace.propagation.tracecontext import (
-        TraceContextTextMapPropagator,
-    )
+    from opentelemetry.trace.propagation.tracecontext import \
+        TraceContextTextMapPropagator
 
     # pylint: enable=import-outside-toplevel
 
