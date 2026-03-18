@@ -205,8 +205,7 @@ def _add_otlp_exporter(provider) -> None:
     if not otlp_endpoint:
         return
     # pylint: disable=import-outside-toplevel
-    from opentelemetry.exporter.otlp.proto.http.trace_exporter import \
-        OTLPSpanExporter
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
     # pylint: enable=import-outside-toplevel
@@ -221,8 +220,9 @@ def _setup_propagators(provider) -> None:
     from opentelemetry import trace as otel_trace
     from opentelemetry.propagators.b3 import B3MultiFormat
     from opentelemetry.propagators.composite import CompositePropagator
-    from opentelemetry.trace.propagation.tracecontext import \
-        TraceContextTextMapPropagator
+    from opentelemetry.trace.propagation.tracecontext import (
+        TraceContextTextMapPropagator,
+    )
 
     # pylint: enable=import-outside-toplevel
 
