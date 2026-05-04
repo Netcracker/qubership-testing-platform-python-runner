@@ -1,5 +1,6 @@
 DOCKER_TAG: ""
 ENVIRONMENT_NAME: "default"
+ENV_CONFIGURATION_TEMPLATE_FILENAME: "environment-configuration-template.json"
 ATP_TESTS_GIT_REPO_URL: ""
 ATP_TESTS_GIT_REPO_BRANCH: "main"
 ATP_TESTS_GIT_TOKEN: "your-token"
@@ -15,9 +16,11 @@ CURRENT_DATE: ""
 CURRENT_TIME: ""
 ATP_RUNNER_JOB_TTL: "3600"
 ATP_RUNNER_JOB_EXIT_STRATEGY: "EXIT_ALWAYS"
+DEBUG_MODE: false
 TEST_PARAMS: {}
 ATP_ENVGENE_CONFIGURATION: {}
 ENABLE_JIRA_INTEGRATION: false
+ATP_MONITORING_ENABLED: true
 # Security Context properties
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
@@ -28,4 +31,12 @@ podSecurityContext:
 containerSecurityContext: {}
 affinity: {}
 tolerations: []
-MONITORING_ENABLED: true
+
+# Variables for render environment configuration template
+CLOUD_PROTOCOL: ""
+CLOUD_PUBLIC_HOST: ""
+DEFAULT_TENANT_NAME: ""
+DEFAULT_TENANT_ADMIN_LOGIN: ""
+DEFAULT_TENANT_ADMIN_PASSWORD: ""
+CONSUL_PUBLIC_URL: ""
+CONSUL_ADMIN_TOKEN: ""

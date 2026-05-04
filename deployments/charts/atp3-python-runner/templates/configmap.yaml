@@ -3,5 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "atp3-python-runner.fullname" . }}-cm
 data:
-  testParams: |
-    {{ toJson .Values.TEST_PARAMS | nindent 4 }}
+  CLOUD_PROTOCOL: {{ .Values.CLOUD_PROTOCOL | default "" | quote }}
+  CLOUD_PUBLIC_HOST: {{ .Values.CLOUD_PUBLIC_HOST | default "" | quote }}
+  CONSUL_PUBLIC_URL: {{ .Values.CONSUL_PUBLIC_URL | default "" | quote }}
