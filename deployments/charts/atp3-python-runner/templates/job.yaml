@@ -72,7 +72,7 @@ spec:
             - name: DEBUG_MODE
               value: "{{ .Values.DEBUG_MODE }}"
             - name: TEST_PARAMS
-              value: { { toJson .Values.TEST_PARAMS | quote } }
+              value: {{ toJson .Values.TEST_PARAMS | quote }}
             - name: ATP_ENVGENE_CONFIGURATION
               valueFrom:
                 secretKeyRef:
@@ -96,25 +96,25 @@ spec:
             - name: DEFAULT_TENANT_ADMIN_LOGIN
               valueFrom:
                 secretKeyRef:
-                  name: { { include "atp3-python-runner.fullname" . } }-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: defaultTenantAdminLogin
             - name: DEFAULT_TENANT_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: { { include "atp3-python-runner.fullname" . } }-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: defaultTenantAdminPassword
             - name: DEFAULT_TENANT_NAME
               valueFrom:
                 secretKeyRef:
-                  name: { { include "atp3-python-runner.fullname" . } }-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: defaultTenantName
             - name: CONSUL_ADMIN_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: { { include "atp3-python-runner.fullname" . } }-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: consulAdminToken
           envFrom:
             - configMapRef:
-                name: { { include "atp3-python-runner.fullname" . } }-cm
+                name: {{ include "atp3-python-runner.fullname" . }}-cm
       restartPolicy: Never
   backoffLimit: 0
