@@ -40,9 +40,8 @@ COPY requirements.txt $HOME_EX/requirements.txt
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
         --timeout=120
 
-COPY scripts/ $HOME_EX/scripts/
-COPY scripts/runtimes/python-setup.sh $HOME_EX/scripts/runtime-setup.sh
-
+COPY --chown=runner:runner scripts/ /scripts/
+COPY --chown=runner:runner scripts/runtimes/python-setup.sh scripts/runtime-setup.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh $HOME_EX/entrypoint.sh
 
 USER 1007
