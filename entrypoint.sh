@@ -25,26 +25,40 @@ export UPLOAD_METHOD="${UPLOAD_METHOD:-sync}"
 echo "📤 Upload method: $UPLOAD_METHOD"
 
 # Import modular components
-source /app/scripts/init.sh
-source /app/scripts/git-clone.sh
-source /app/scripts/runtime-setup.sh
-source /app/scripts/test-runner.sh
-source /app/scripts/upload-monitor.sh
-source /app/scripts/email-notification/generate-email-notification-json.sh
-source /app/scripts/native-report.sh
+# shellcheck disable=SC1091
+source /scripts/error-handler.sh
+# shellcheck disable=SC1091
+source /scripts/init.sh
+# shellcheck disable=SC1091
+source /scripts/git-clone.sh
+# shellcheck disable=SC1091
+source /scripts/runtime-setup.sh
+# shellcheck disable=SC1091
+source /scripts/test-runner.sh
+# shellcheck disable=SC1091
+source /scripts/upload-monitor.sh
+# shellcheck disable=SC1091
+source /scripts/email-notification/generate-email-notification-json.sh
+# shellcheck disable=SC1091
+source /scripts/native-report.sh
+# shellcheck disable=SC1091
+source /scripts/envgene.sh
+# shellcheck disable=SC1091
+source /scripts/render-environment-configuration.sh
 
 # Execute main workflow
 echo "🚀 Starting test execution workflow..."
 
-init_environment
-clone_repository
-setup_runtime_environment
-start_upload_monitoring
-run_tests
-generate_email_notification_json
-save_native_report $TMP_DIR/test-results
-finalize_upload
+# finalize_once() is defined in error-handler.sh (sourced above).
+# Register it here after all scripts are sourced so every function it calls is available.
+trap 'finalize_once' EXIT
 
-sleep 30
+init_environment              || fail "Environment initialization failed"
+clone_repository              || fail "Repository clone failed"
+render_environment_configuration || fail "Render Environment Configuration Failed"
+load_envgene                  || fail "Load Envgen Failed"
+setup_runtime_environment     || fail "Runtime setup failed"
+start_upload_monitoring
+run_tests                     || fail "Test runner failed"
 
 echo "✅ Test job finished successfully!"
