@@ -1,10 +1,9 @@
 # Qubership Testing Platform Python Collections Runner
 
-Qubership Testing Platform Python Collections Runner is a CI/CD utility 
-designed to automate and manage the deployment and execution of Python-based test collections. 
-It streamlines setting up test environments, deploying applications, validating infrastructure, 
-and securely running Python tests in cloud-native environments. The runner integrates with Git repositories, 
-collects environment variables, and supports parameterized test launches suitable for modern DevOps workflows.
+Qubership Testing Platform Python Collections Runner is a CI/CD utility. 
+It's designed to automate and manage the deployment and execution of Python-based test collections.
+It streamlines setting up test environments, deploying applications, validating infrastructure, and securely running Python tests in cloud-native environments.
+The runner integrates with Git repositories, collects environment variables, and supports parameterized test launches suitable for modern DevOps workflows.
   
 Key features include:
 - Automated provisioning of test environments and dependencies.
