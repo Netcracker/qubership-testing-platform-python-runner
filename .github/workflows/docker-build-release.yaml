@@ -75,7 +75,10 @@ jobs:
 
       - name: "Prepare tags"
         id: prepare_tags
+        env:
+          version_type: ${{ inputs.version_type }}
         run: |
+          echo "version_type=$version_type"
           echo "Check current tag"
           git fetch --tags
           TAG=$(git tag --list 'v*' --sort=-v:refname | tr -d '\r' | head -n 1)
