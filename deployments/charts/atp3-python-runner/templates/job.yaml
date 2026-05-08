@@ -73,6 +73,8 @@ spec:
               value: "{{ .Values.DEBUG_MODE }}"
             - name: TEST_PARAMS
               value: {{ toJson .Values.TEST_PARAMS | quote }}
+            - name: EXTRA_VARS
+              value: "{{ .Values.EXTRA_VARS }}"
             - name: ATP_ENVGENE_CONFIGURATION
               valueFrom:
                 secretKeyRef:

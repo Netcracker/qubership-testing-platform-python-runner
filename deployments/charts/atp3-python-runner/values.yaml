@@ -24,6 +24,7 @@ ATP_MONITORING_ENABLED: true
 # Security Context properties
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
+EXTRA_VARS: ""
 # runAsUser is the user ID used to run the container
 podSecurityContext:
   runAsUser: 1000
