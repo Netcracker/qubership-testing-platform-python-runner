@@ -122,17 +122,17 @@ spec:
             - name: ARGOCD_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "atp3-playwright-runner.fullname" . }}-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: argocdUser
             - name: ARGOCD_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "atp3-playwright-runner.fullname" . }}-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: argocdPassword
             - name: K8S_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "atp3-playwright-runner.fullname" . }}-secret
+                  name: {{ include "atp3-python-runner.fullname" . }}-secret
                   key: k8sToken
           envFrom:
             - configMapRef:
