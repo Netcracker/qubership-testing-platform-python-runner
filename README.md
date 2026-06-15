@@ -110,7 +110,10 @@ flowchart TD
 | DEBUG_MODE                          | boolean | no        | `false`                                   | Enable additional debug behavior and logs in runner scripts.                                                           |
 | ATP_MONITORING_ENABLED              | boolean | no        | `false`                                   | Enable creation monitoring objects for runners.                                                                        |
 | SECURITY_CONTEXT_ENABLED            | boolean | no        | `false`                                   | Flag to enable or disable the security context for the Playwright Runner service .                                     |
-
+| EXTRA_VARS                          | string  | no        | ``                                        | Passes additional environment variables to the test runner in the form of key-value pairs (e.g., `A=1;B=2`, `A=1,B=2`, or using newlines). Supports semicolon, comma delimiters. |
+| podSecurityContext                  | object  | no        | `{ runAsUser: 1000, fsGroup: 1000 }`      | Kubernetes pod-level security context for the runner Job. Applied when `SECURITY_CONTEXT_ENABLED=true`. Sets UID/GID for pod processes and volume file ownership.                                                                                            |
+| TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
+| ATP_APPLICATION_VERSION             | string  | no        | `""`                                      | Optional technical parameter. Runner version; propagated to the runner pod for reports and test run metadata.                                                                                                                          |
 
 ## Hardware / Resource Requirements (HWE)
 

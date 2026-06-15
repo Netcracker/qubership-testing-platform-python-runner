@@ -45,6 +45,8 @@ source /scripts/native-report.sh
 source /scripts/envgene.sh
 # shellcheck disable=SC1091
 source /scripts/render-environment-configuration.sh
+# shellcheck disable=SC1091
+source /scripts/parse-extra-vars.sh
 
 # Execute main workflow
 echo "🚀 Starting test execution workflow..."
@@ -54,6 +56,7 @@ echo "🚀 Starting test execution workflow..."
 trap 'finalize_once' EXIT
 
 init_environment              || fail "Environment initialization failed"
+parse_extra_vars              || fail "EXTRA_VARS parsing failed"
 clone_repository              || fail "Repository clone failed"
 render_environment_configuration || fail "Render Environment Configuration Failed"
 load_envgene                  || fail "Load Envgen Failed"
