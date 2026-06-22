@@ -21,10 +21,11 @@ TEST_PARAMS: {}
 ATP_ENVGENE_CONFIGURATION: {}
 ENABLE_JIRA_INTEGRATION: false
 ATP_MONITORING_ENABLED: true
+EXTRA_VARS: ""
+TRIGGER_AUTHOR: ""
 # Security Context properties
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
-EXTRA_VARS: ""
 # runAsUser is the user ID used to run the container
 podSecurityContext:
   runAsUser: 1000
@@ -41,3 +42,6 @@ DEFAULT_TENANT_ADMIN_LOGIN: ""
 DEFAULT_TENANT_ADMIN_PASSWORD: ""
 CONSUL_PUBLIC_URL: ""
 CONSUL_ADMIN_TOKEN: ""
+ARGOCD_USER: ""
+ARGOCD_PASSWORD: ""
+K8S_TOKEN: ""
