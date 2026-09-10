@@ -23,6 +23,7 @@ ENABLE_JIRA_INTEGRATION: false
 ATP_MONITORING_ENABLED: true
 EXTRA_VARS: ""
 TRIGGER_AUTHOR: ""
+TRIGGER_PIPELINE_SOURCE: ""
 # Security Context properties
 # enabled is a flag to enable Security Context
 SECURITY_CONTEXT_ENABLED: false
