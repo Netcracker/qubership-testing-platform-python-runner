@@ -5,6 +5,7 @@ ENV HOME_EX=/app
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
+        git=2.49.1-r0 \
         curl=8.14.1-r3 \
         wget=1.25.0-r1 \
         bash=5.2.37-r0 \
