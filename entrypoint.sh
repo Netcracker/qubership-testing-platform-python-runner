@@ -42,8 +42,6 @@ source /scripts/email-notification/generate-email-notification-json.sh
 # shellcheck disable=SC1091
 source /scripts/native-report.sh
 # shellcheck disable=SC1091
-source /scripts/envgene.sh
-# shellcheck disable=SC1091
 source /scripts/render-environment-configuration.sh
 # shellcheck disable=SC1091
 source /scripts/parse-extra-vars.sh
