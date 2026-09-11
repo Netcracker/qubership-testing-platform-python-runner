@@ -42,8 +42,6 @@ source /scripts/email-notification/generate-email-notification-json.sh
 # shellcheck disable=SC1091
 source /scripts/native-report.sh
 # shellcheck disable=SC1091
-source /scripts/envgene.sh
-# shellcheck disable=SC1091
 source /scripts/render-environment-configuration.sh
 # shellcheck disable=SC1091
 source /scripts/parse-extra-vars.sh
@@ -59,7 +57,6 @@ init_environment              || fail "Environment initialization failed"
 parse_extra_vars              || fail "EXTRA_VARS parsing failed"
 clone_repository              || fail "Repository clone failed"
 render_environment_configuration || fail "Render Environment Configuration Failed"
-load_envgene                  || fail "Load Envgen Failed"
 setup_runtime_environment     || fail "Runtime setup failed"
 start_upload_monitoring
 run_tests                     || fail "Test runner failed"
