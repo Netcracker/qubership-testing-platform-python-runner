@@ -57,7 +57,6 @@ init_environment              || fail "Environment initialization failed"
 parse_extra_vars              || fail "EXTRA_VARS parsing failed"
 clone_repository              || fail "Repository clone failed"
 render_environment_configuration || fail "Render Environment Configuration Failed"
-load_envgene                  || fail "Load Envgen Failed"
 setup_runtime_environment     || fail "Runtime setup failed"
 start_upload_monitoring
 run_tests                     || fail "Test runner failed"
