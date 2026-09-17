@@ -19,6 +19,7 @@ Key features include:
   - [Main flow](#main-flow)
   - [Deploy parameters](#deploy-parameters)
   - [Hardware / Resource Requirements (HWE)](#hardware--resource-requirements-hwe)
+- [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers)
 - [Quick Start](#quick-start)
   - [Prerequisites](#prerequisites)
   - [Setting Up Your Test Repository](#setting-up-your-test-repository)
@@ -92,6 +93,8 @@ flowchart TD
 | ATP_TESTS_GIT_REPO_URL              | string  | **yes**   | `""`                                      | Git repository URL for cloning test sources. Git-URL-to-project-tests.git                                              |
 | ATP_TESTS_GIT_REPO_BRANCH           | string  | no        | `main`                                    | Git branch to checkout.                                                                                                |
 | TEST_PARAMS                         | JSON    | **yes**   | `{}`                                      | Specify what test or scope should be run, for example: `'{"execution_list":[{"type": "scope","name": "regression"}]}'` |
+| PROJECT_ID                          | string  | **yes**   | `""`                                      | Project identifier from the orchestrator, used as-is in the `X-B3-TraceId` header. See [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers). |
+| RUN_ID                              | string  | **yes**   | `""`                                      | Test run identifier from the orchestrator, used as-is in the `X-B3-TraceId` header. See [OpenTelemetry (B3) Trace Headers](#opentelemetry-b3-trace-headers). |
 | ATP_ENVGENE_CONFIGURATION           | JSON    | no        | `{}`                                      | Additional test parameters (Systems) to pass to test runner from EnvGene.                                              |
 | ATP_TESTS_GIT_REPO_BRANCH           | string  | no        | `main`                                    | Git branch to checkout.                                                                                                |
 | ATP_STORAGE_PROVIDER                | string  | no        | `"minio"`                                 | Type of S3 storage (e.g., minio, aws).                                                                                 |
@@ -124,6 +127,26 @@ Supported 2 profiles: `dev`, `prod`.
 | MEMORY_LIMIT     | 1000Mi | 2000Mi   |
 | CPU_REQUEST      | 100m   | 300m     |
 | CPU_LIMIT        | 500m   | 1000m    |
+
+## OpenTelemetry (B3) trace headers
+
+The runner adds B3 trace headers to every `requests` call your test suite makes, so a tail-sampling collector can
+group the calls one pytest test makes under a single trace.
+
+| Header         | Value                                               | Scope                               |
+|----------------|------------------------------------------------------|---------------------------------------|
+| `X-B3-TraceId` | `<PROJECT_ID><RUN_ID><testcase_id>` (13 characters) | Fixed for one test, across reruns     |
+| `X-B3-SpanId`  | 16 lowercase hex characters                          | Fresh on every `requests` call        |
+| `X-B3-Sampled` | `1`                                                  | Always                                |
+
+`PROJECT_ID` and `RUN_ID` are used as-is from the orchestrator; `testcase_id` is derived from pytest's own node ID
+(module, class and test name), so it stays the same across reruns of one test.
+
+No change to your test suite is required, beyond making HTTP calls through the `requests` library. A pytest plugin
+bundled with the runner image registers itself automatically and adds the headers to every `requests.get`,
+`.post`, and other call your tests make; a test suite that uses a different HTTP client is not covered.
+
+Headers are skipped, with no error, when `PROJECT_ID` or `RUN_ID` is not set.
 
 ### Quick Start
 
