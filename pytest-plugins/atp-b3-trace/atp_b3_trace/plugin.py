@@ -54,24 +54,28 @@ def pytest_runtest_setup(item) -> None:
     _current_trace_id.set(_trace_id_for(item.nodeid))
 
 
-def pytest_runtest_teardown(item, nextitem) -> None:
+def pytest_runtest_teardown() -> None:
     """Clears the trace ID set by `pytest_runtest_setup`, so teardown code carries none."""
     _current_trace_id.set(None)
 
 
-def pytest_configure(config) -> None:
+def pytest_configure() -> None:
     """Patches `requests.Session.request` to add B3 headers, when `requests` is importable."""
     try:
-        import requests
+        import requests  # pylint: disable=import-outside-toplevel
     except ImportError:
         return
     _patch_requests_session(requests)
 
 
+_SESSION_PATCHED = False
+
+
 def _patch_requests_session(requests_module) -> None:
-    original_request = requests_module.Session.request
-    if getattr(original_request, "_atp_b3_patched", False):
+    global _SESSION_PATCHED  # pylint: disable=global-statement
+    if _SESSION_PATCHED:
         return
+    original_request = requests_module.Session.request
 
     def patched_request(self, method, url, **kwargs):
         trace_id = _current_trace_id.get()
@@ -81,5 +85,5 @@ def _patch_requests_session(requests_module) -> None:
             kwargs["headers"] = headers
         return original_request(self, method, url, **kwargs)
 
-    patched_request._atp_b3_patched = True
     requests_module.Session.request = patched_request
+    _SESSION_PATCHED = True
