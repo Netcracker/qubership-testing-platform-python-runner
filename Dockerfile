@@ -14,7 +14,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
         inotify-tools=4.23.9.0-r0 \
         jq=1.8.2-r0 \
         build-base=0.5-r3 \
-        python3-dev=3.12.14-r0 \
+        python3-dev=3.12.15-r0 \
         musl-dev=1.2.5-r12 \
         libffi-dev=3.4.8-r0 \
         py3-requests=2.33.1-r0 \
