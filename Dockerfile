@@ -41,6 +41,12 @@ COPY requirements.txt $HOME_EX/requirements.txt
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
         --timeout=120
 
+# Pytest plugin bundled with this image, not published to PyPI: it registers itself via the
+# "pytest11" entry point, so every test suite this runner executes picks it up automatically.
+COPY pytest-plugins/atp-b3-trace pytest-plugins/atp-b3-trace
+RUN pip install --no-cache-dir --break-system-packages --no-deps pytest-plugins/atp-b3-trace && \
+    rm -rf pytest-plugins
+
 COPY --chown=runner:runner scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/python-setup.sh scripts/runtime-setup.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh $HOME_EX/entrypoint.sh
