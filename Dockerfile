@@ -6,7 +6,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
         git=2.49.1-r0 \
-        curl=8.14.1-r3 \
+        curl=8.14.1-r4 \
         wget=1.25.0-r1 \
         bash=5.2.37-r0 \
         unzip=6.0-r15 \
@@ -14,8 +14,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repo
         inotify-tools=4.23.9.0-r0 \
         jq=1.8.2-r0 \
         build-base=0.5-r3 \
-        python3-dev=3.12.15-r0 \
-        musl-dev=1.2.5-r12 \
+        python3-dev=3.12.16-r0 \
+        musl-dev=1.2.5-r13 \
         libffi-dev=3.4.8-r0 \
         py3-requests=2.33.1-r0 \
         py3-urllib3=1.26.20-r1 \
