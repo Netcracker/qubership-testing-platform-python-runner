@@ -24,16 +24,12 @@ ATP_MONITORING_ENABLED: true
 EXTRA_VARS: ""
 TRIGGER_AUTHOR: ""
 TRIGGER_PIPELINE_SOURCE: ""
-# Security Context properties
-# enabled is a flag to enable Security Context
-SECURITY_CONTEXT_ENABLED: false
-# runAsUser is the user ID used to run the container
-podSecurityContext:
-  runAsUser: 1000
-  fsGroup: 1000
-containerSecurityContext: {}
-affinity: {}
-tolerations: []
+POD_SECURITY_CONTEXT:
+  runAsUser: 1007
+  fsGroup: 1007
+CONTAINER_SECURITY_CONTEXT: {}
+AFFINITY: {}
+TOLERATIONS: []
 
 # Variables for render environment configuration template
 CLOUD_PROTOCOL: ""

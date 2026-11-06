@@ -15,6 +15,12 @@
 
 set -e
 
+# OpenShift restricted-v2 runs an arbitrary UID in group 0. Register it so
+# Python, pip, and git can resolve a user name and home directory.
+if ! whoami >/dev/null 2>&1; then
+  echo "runner:x:$(id -u):0:runner:${HOME:-/app}:/sbin/nologin" >> /etc/passwd
+fi
+
 # Main test job entrypoint script - coordinates all modules
 echo "🔧 Starting test job entrypoint script..."
 echo "📁 Working directory: $(pwd)"

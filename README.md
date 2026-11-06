@@ -112,10 +112,14 @@ flowchart TD
 | ENABLE_JIRA_INTEGRATION             | boolean | no        | `false`                                   | Enable Jira integration for tests.                                                                                     |
 | DEBUG_MODE                          | boolean | no        | `false`                                   | Enable additional debug behavior and logs in runner scripts.                                                           |
 | ATP_MONITORING_ENABLED              | boolean | no        | `false`                                   | Enable creation monitoring objects for runners.                                                                        |
-| SECURITY_CONTEXT_ENABLED            | boolean | no        | `false`                                   | Flag to enable or disable the security context for the Playwright Runner service .                                     |
 | EXTRA_VARS                          | string  | no        | ``                                        | Passes additional environment variables to the test runner in the form of key-value pairs (e.g., `A=1;B=2`, `A=1,B=2`, or using newlines). Supports semicolon, comma delimiters. |
-| podSecurityContext                  | object  | no        | `{ runAsUser: 1000, fsGroup: 1000 }`      | Kubernetes pod-level security context for the runner Job. Applied when `SECURITY_CONTEXT_ENABLED=true`. Sets UID/GID for pod processes and volume file ownership.                                                                                            |
+| POD_SECURITY_CONTEXT                | object  | no        | `{ runAsUser: 1007, fsGroup: 1007 }`      | UID/GID pin merged with chart defaults (`runAsNonRoot`, `seccompProfile`). `runAsUser`/`runAsGroup`/`fsGroup` are omitted when Helm sees `security.openshift.io/v1` (OpenShift `restricted-v2`). Always applied to the runner Job. |
+| CONTAINER_SECURITY_CONTEXT          | object  | no        | `{}`                                      | Optional overrides merged with chart defaults (`allowPrivilegeEscalation: false`, drop `ALL`). Always applied to the runner Job. |
 | TRIGGER_AUTHOR                      | string  | no        | `""`                                      | Optional technical parameter. Used to display the test run author in the report.                                                                                                                                                                             |
+
+The Job always gets a pod and container `securityContext` (`runAsNonRoot`, `RuntimeDefault` seccomp, drop `ALL` capabilities).
+
+On vanilla Kubernetes, `POD_SECURITY_CONTEXT` pins UID/GID **1007**. On OpenShift Helm detects `security.openshift.io/v1` and omits `runAsUser`/`runAsGroup`/`fsGroup` so `restricted-v2` can assign the project UID range. Offline `helm template` without `--api-versions security.openshift.io/v1` looks like Kubernetes and keeps the UID pin.
 
 ## Hardware / Resource Requirements (HWE)
 
