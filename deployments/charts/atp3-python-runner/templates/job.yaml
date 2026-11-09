@@ -13,24 +13,19 @@ spec:
       labels:
         metrics-type: atp3-service
     spec:
-      {{- if .Values.SECURITY_CONTEXT_ENABLED }}
       securityContext:
-        {{- include "securityContext.pod" . | nindent 12 }}
+        {{- include "securityContext.pod" . | nindent 8 }}
+      {{- if .Values.AFFINITY }}
+      affinity: {{- toYaml .Values.AFFINITY | nindent 8 }}
       {{- end }}
-      {{- if .Values.affinity }}
-      affinity: {{- toYaml .Values.affinity | nindent 8 }}
-      {{- end }}
-
-      {{- if .Values.tolerations }}
-      tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- if .Values.TOLERATIONS }}
+      tolerations: {{- toYaml .Values.TOLERATIONS | nindent 8 }}
       {{- end }}
       containers:
         - name: atp3-python-runner
           image: '{{ .Values.DOCKER_TAG }}'
-          {{- if .Values.SECURITY_CONTEXT_ENABLED }}
           securityContext:
             {{- include "securityContext.container" . | nindent 12 }}
-          {{- end }}
           resources:
             requests:
               memory: '{{ .Values.MEMORY_REQUEST }}'

@@ -1,6 +1,8 @@
 FROM python:3.14-alpine3.22
 
 ENV HOME_EX=/app
+ENV HOME=/app
+ENV PATH="/app/venv/bin:$PATH"
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.22/main/" >>/etc/apk/repositories && \
@@ -36,20 +38,32 @@ RUN addgroup -g 1007 runner && \
 
 WORKDIR $HOME_EX
 
+RUN python -m venv "$HOME_EX/venv"
+
 COPY requirements.txt $HOME_EX/requirements.txt
 
-RUN pip install --no-cache-dir --break-system-packages -r requirements.txt \
+RUN pip install --no-cache-dir -r requirements.txt \
         --timeout=120
 
 # Pytest plugin bundled with this image, not published to PyPI: it registers itself via the
 # "pytest11" entry point, so every test suite this runner executes picks it up automatically.
 COPY pytest-plugins/atp-b3-trace pytest-plugins/atp-b3-trace
-RUN pip install --no-cache-dir --break-system-packages --no-deps pytest-plugins/atp-b3-trace && \
+RUN pip install --no-cache-dir --no-deps pytest-plugins/atp-b3-trace && \
     rm -rf pytest-plugins
 
 COPY --chown=runner:runner scripts/ /scripts/
 COPY --chown=runner:runner scripts/runtimes/python-setup.sh scripts/runtime-setup.sh
 COPY --chown=runner:runner --chmod=755 entrypoint.sh $HOME_EX/entrypoint.sh
+
+# chgrp 0 + g=u supports OpenShift restricted-v2 (arbitrary UID, member of gid 0)
+# while Kubernetes can still run the container as USER 1007 via owner permissions.
+# Group-writable /etc/passwd lets the entrypoint register the arbitrary UID.
+RUN chown -R runner:runner /app /scripts \
+    && chgrp -R 0 /app /scripts \
+    && chmod -R g=u /app /scripts \
+    && chmod g+rx /app /scripts \
+    && chgrp 0 /etc/passwd \
+    && chmod g=u /etc/passwd
 
 USER 1007
 
